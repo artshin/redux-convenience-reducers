@@ -1,0 +1,61 @@
+{
+  "name": "redux-convenience-reducers",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "test": "jest",
+    "lint": "tslint 'src/**/*.{ts,tsx}'",
+    "clean-install": "rm -rf node_modules && yarn",
+    "babel-build": "babel src --out-dir lib --extensions \".ts,.tsx\"",
+    "build": "tsc --outDir lib",
+    "dev": "ts-node src"
+  },
+  "dependencies": {
+    "@martin_hotell/rex-tils": "2.1.1",
+    "lodash": "4.17.11",
+    "react-redux": "6.0.1",
+    "redux": "4.0.1",
+    "uuid": "3.3.2"
+  },
+  "devDependencies": {
+    "@babel/core": "7.3.4",
+    "@babel/runtime": "7.3.4",
+    "@babel/cli": "7.2.3",
+    "@types/jest": "24.0.11",
+    "@types/lodash": "4.14.123",
+    "@types/react-redux": "7.0.5",
+    "@types/react-test-renderer": "16.8.1",
+    "@types/redux-mock-store": "1.0.0",
+    "@types/uuid": "3.4.4",
+    "babel-jest": "24.5.0",
+    "jest": "24.5.0",
+    "prettier": "1.16.4",
+    "redux-mock-store": "1.5.3",
+    "ts-jest": "24.0.0",
+    "tslint": "5.14.0",
+    "tslint-config-prettier": "1.18.0",
+    "tslint-config-standard": "8.0.1",
+    "typescript": "3.3.3333",
+    "ts-node": "8.0.3",
+    "redux-thunk": "2.3.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.(js)$": "<rootDir>/node_modules/babel-jest",
+      "\\.(ts|tsx)$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "testPathIgnorePatterns": [
+      "\\.snap$",
+      "<rootDir>/node_modules/"
+    ],
+    "cacheDirectory": ".jest/cache",
+    "setupFiles": []
+  }
+}

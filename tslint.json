@@ -1,0 +1,16 @@
+{
+  "defaultSeverity": "error",
+  "extends": ["tslint:recommended", "tslint-config-standard", "tslint-config-prettier"],
+  "jsRules": {},
+  "rules": {
+    "semicolon": [true, "never"],
+    "interface-name": [true, "never-prefix"],
+    "no-empty-interface": [false],
+    "ordered-imports": false,
+    "object-literal-sort-keys": false,
+    "jsx-boolean-value": false,
+    "quotemark": [true, "single", "jsx-single"],
+    "object-literal-shorthand": true
+  },
+  "rulesDirectory": []
+}
