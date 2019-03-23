@@ -16,6 +16,12 @@ import {
 import { LoadingReducer, reducer as loadingReducer } from './Reducers/LoadingReducer'
 import { ErrorReducer, reducer as errorReducer } from './Reducers/ErrorReducer'
 import { Resource, ResourceById } from './Types'
+import {
+  getResources,
+  postResource,
+  patchResource,
+  deleteResource,
+} from './Actions/ResourceListsActions'
 
 export {
   DictionaryActionTypes,
@@ -34,4 +40,8 @@ export {
   errorReducer,
   Resource,
   ResourceById,
+  getResources,
+  postResource,
+  patchResource,
+  deleteResource,
 }
