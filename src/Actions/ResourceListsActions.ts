@@ -6,7 +6,7 @@ import {
   ResourceListsActions,
   resourceInitialState,
   ResourceListsReducer,
-} from '../Reducers/ResourceListReducer'
+} from '../Reducers/ResourceListsReducer'
 
 const anyErrorToString = (error: any): string => {
   if (error instanceof Error) {

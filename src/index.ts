@@ -4,8 +4,8 @@ import {
   ResourceListActionTypes,
   initialState as resourceListReducerInitialState,
   resourceInitialState,
-  reducer as resourceListReducer,
-} from './Reducers/ResourceListReducer'
+  reducer as resourceListsReducer,
+} from './Reducers/ResourceListsReducer'
 
 import {
   DictionaryActionTypes,
@@ -27,7 +27,7 @@ export {
   ResourceListActionTypes,
   resourceListReducerInitialState,
   resourceInitialState,
-  resourceListReducer,
+  resourceListsReducer,
   LoadingReducer,
   loadingReducer,
   ErrorReducer,

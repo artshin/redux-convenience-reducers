@@ -5,7 +5,7 @@ import {
   ResourceListsActions,
   ResourceListActionTypes,
   ResourceListsReducer,
-} from '../src/Reducers/ResourceListReducer'
+} from '../src/Reducers/ResourceListsReducer'
 import keyBy from 'lodash/keyBy'
 import { Resource } from '../src/Types'
 import {
@@ -17,7 +17,7 @@ import {
   NoResourceToUpdateError,
   NoResourceToDeleteError,
   DataSourceProtocol,
-} from '../src/Actions/ResourceListActions'
+} from '../src/Actions/ResourceListsActions'
 import thunk, { ThunkDispatch } from 'redux-thunk'
 import { Action } from 'redux'
 
