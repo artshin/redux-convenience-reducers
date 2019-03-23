@@ -2,6 +2,7 @@
   "name": "redux-convenience-reducers",
   "version": "0.0.1",
   "private": true,
+  "main": "src/index.ts",
   "scripts": {
     "test": "jest",
     "lint": "tslint 'src/**/*.{ts,tsx}'",
