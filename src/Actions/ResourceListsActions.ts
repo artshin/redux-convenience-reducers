@@ -36,7 +36,7 @@ export interface DataSourceProtocol<T extends Resource> {
 export const getResources = <T extends Resource, S extends ReduxState>(
   resourceName: string,
   dataSource: DataSourceProtocol<T>,
-): ThunkResult<void, S> => async dispatch => {
+): ThunkResult<Promise<T[]>, S> => async dispatch => {
   dispatch(ResourceListsActions.getResourcesRequest(resourceName))
   try {
     const resources = dataSource.getResources(resourceName)
@@ -45,10 +45,12 @@ export const getResources = <T extends Resource, S extends ReduxState>(
     const ids = resources.map(el => el.id)
 
     dispatch(ResourceListsActions.getResourcesSuccess(resourceName, resourcesById, ids))
+    return resources
   } catch (error) {
     dispatch(
       ResourceListsActions.getResourcesFailure(resourceName, { message: anyErrorToString(error) }),
     )
+    return Promise.reject()
   }
 }
 
@@ -58,7 +60,7 @@ export const postResource = <T extends Resource, S extends ReduxState>(
   resource: T,
   dataSource: DataSourceProtocol<T>,
   validationBlock?: (resource: T) => string[],
-): ThunkResult<void, S> => async (dispatch, getState) => {
+): ThunkResult<Promise<T>, S> => async (dispatch, getState) => {
   dispatch(ResourceListsActions.postResourceRequest(resourceName))
 
   const { resources } = getState()
@@ -80,12 +82,14 @@ export const postResource = <T extends Resource, S extends ReduxState>(
     const postedResource = await dataSource.postResource(resourceName, resource)
 
     dispatch(ResourceListsActions.postResourceSuccess(resourceName, postedResource))
+    return postedResource
   } catch (error) {
     dispatch(
       ResourceListsActions.postResourceFailure(resourceName, {
         message: anyErrorToString(error),
       }),
     )
+    return Promise.reject(error)
   }
 }
 
@@ -94,7 +98,7 @@ export const patchResource = <T extends Resource, S extends ReduxState>(
   resourceName: string,
   resource: T,
   dataSource: DataSourceProtocol<T>,
-): ThunkResult<void, S> => async (dispatch, getState) => {
+): ThunkResult<Promise<T>, S> => async (dispatch, getState) => {
   dispatch(ResourceListsActions.patchResourceRequest(resourceName))
 
   const { resources } = getState()
@@ -108,12 +112,14 @@ export const patchResource = <T extends Resource, S extends ReduxState>(
     const patchedResource = await dataSource.patchResource(resourceName, resource)
 
     dispatch(ResourceListsActions.patchResourceSuccess(resourceName, patchedResource))
+    return patchedResource
   } catch (error) {
     dispatch(
       ResourceListsActions.patchResourceFailure(resourceName, {
         message: anyErrorToString(error),
       }),
     )
+    return Promise.reject(error)
   }
 }
 
@@ -122,7 +128,7 @@ export const deleteResource = <T extends Resource, S extends ReduxState>(
   resourceName: string,
   resource: T,
   dataSource: DataSourceProtocol<T>,
-): ThunkResult<void, S> => async (dispatch, getState) => {
+): ThunkResult<Promise<void>, S> => async (dispatch, getState) => {
   dispatch(ResourceListsActions.deleteResourceRequest(resourceName))
 
   const { resources } = getState()
@@ -136,11 +142,13 @@ export const deleteResource = <T extends Resource, S extends ReduxState>(
     await dataSource.deleteResource(resourceName, resource)
 
     dispatch(ResourceListsActions.deleteResourceSuccess(resourceName, resource))
+    return Promise.resolve()
   } catch (error) {
     dispatch(
       ResourceListsActions.deleteResourceFailure(resourceName, {
         message: anyErrorToString(error),
       }),
     )
+    return Promise.reject(error)
   }
 }

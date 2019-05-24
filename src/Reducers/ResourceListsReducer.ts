@@ -110,6 +110,7 @@ export const reducer = (state: ResourceListsReducer = initialState, action: Acti
         [action.payload.resourceName]: {
           ...resourceState,
           byId: {
+            ...resourceState.byId,
             [action.payload.resource.id]: action.payload.resource,
           },
           allIds: [...resourceState.allIds, action.payload.resource.id],
