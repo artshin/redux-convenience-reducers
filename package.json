@@ -1,7 +1,6 @@
 {
   "name": "redux-convenience-reducers",
-  "version": "0.0.2",
-  "private": true,
+  "version": "0.0.3",
   "main": "src/index.ts",
   "author": {
     "email": "npm@ashnkvch.com",

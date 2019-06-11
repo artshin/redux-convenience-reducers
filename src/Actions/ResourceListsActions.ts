@@ -27,10 +27,19 @@ interface ReduxState {
 }
 
 export interface DataSourceProtocol<T extends Resource> {
-  getResources: (schemaName: string) => T[]
+  getResources: (schemaName: string) => Promise<T[]>
   postResource: (schemaName: string, resource: T) => Promise<T>
   patchResource: (schemaName: string, resource: T) => Promise<T>
   deleteResource: (schemaName: string, resource: T) => Promise<void>
+}
+
+export const BlankDataSource: DataSourceProtocol<Resource> = {
+  getResources: (_: string): Promise<Resource[]> => Promise.resolve([]),
+  postResource: async (_: string, resource: Resource): Promise<Resource> =>
+    Promise.resolve(resource),
+  patchResource: async (_: string, resource: Resource): Promise<Resource> =>
+    Promise.resolve(resource),
+  deleteResource: async (): Promise<void> => Promise.resolve(),
 }
 
 export const getResources = <T extends Resource, S extends ReduxState>(
@@ -39,7 +48,7 @@ export const getResources = <T extends Resource, S extends ReduxState>(
 ): ThunkResult<Promise<T[]>, S> => async dispatch => {
   dispatch(ResourceListsActions.getResourcesRequest(resourceName))
   try {
-    const resources = dataSource.getResources(resourceName)
+    const resources = await dataSource.getResources(resourceName)
 
     const resourcesById: ResourceById = keyBy(resources, el => el.id)
     const ids = resources.map(el => el.id)
