@@ -48,8 +48,8 @@ interface ReduxState {
 
 // tslint:disable-next-line max-classes-per-file
 class DataSource implements DataSourceProtocol<Resource> {
-  public getResources = (_: string): Resource[] => {
-    return []
+  public getResources = (_: string): Promise<Resource[]> => {
+    return Promise.resolve([])
   }
 
   public postResource = (_: string, resource: Resource): Promise<Resource> => {
@@ -285,13 +285,13 @@ describe('Resources.getResources action', () => {
   const dataSource = new DataSource()
 
   beforeEach(() => {
-    dataSource.getResources = jest.fn(_ => [])
+    dataSource.getResources = jest.fn(_ => Promise.resolve([]))
     store = mockStore(emptyReduxStateMock)
   })
 
   test('getResources returns resources in the order received from DataSource', async () => {
     const mockData: Bill[] = [new Bill('resource1'), new Bill('resource')]
-    dataSource.getResources = jest.fn(() => mockData)
+    dataSource.getResources = jest.fn(() => Promise.resolve(mockData))
 
     const resources = await store.dispatch(getResources(Bill.schemaName, dataSource))
     const actions = store.getActions()
