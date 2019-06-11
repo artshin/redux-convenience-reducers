@@ -293,8 +293,10 @@ describe('Resources.getResources action', () => {
     const mockData: Bill[] = [new Bill('resource1'), new Bill('resource')]
     dataSource.getResources = jest.fn(() => mockData)
 
-    await store.dispatch(getResources(Bill.schemaName, dataSource))
+    const resources = await store.dispatch(getResources(Bill.schemaName, dataSource))
     const actions = store.getActions()
+
+    expect(resources).toEqual(mockData)
 
     expect(actions[0]).toStrictEqual({
       type: ResourceListActionTypes.GET_RESOURCES_REQUEST,
@@ -318,13 +320,18 @@ describe('Resources.getResources action', () => {
     expect(actions.length === 2)
   })
 
-  test('getResources catches any error and handles it', async () => {
-    const mockError = 'error'
+  test('getResources can fail with an error and will update redux store with it', async () => {
+    const mockError = new Error('mockError')
     dataSource.getResources = jest.fn(() => {
-      throw new Error(mockError)
+      throw mockError
     })
 
-    await store.dispatch(getResources(Bill.schemaName, dataSource))
+    try {
+      await store.dispatch(getResources(Bill.schemaName, dataSource))
+    } catch (error) {
+      expect(error).toEqual(mockError)
+    }
+
     const actions = store.getActions()
 
     expect(actions[0]).toEqual({
@@ -337,7 +344,7 @@ describe('Resources.getResources action', () => {
     expect(actions[1]).toEqual({
       type: ResourceListActionTypes.GET_RESOURCES_FAILURE,
       payload: {
-        message: mockError,
+        message: mockError.message,
         resourceName: Bill.schemaName,
       },
     })
@@ -358,8 +365,12 @@ describe('Resources.postResource action', () => {
   test('postResource creates new resource passing validation tests', async () => {
     const newResource = new Bill('resource1')
 
-    await store.dispatch(postResource(Bill.schemaName, newResource, dataSource, _ => []))
+    const postedResource = await store.dispatch(
+      postResource(Bill.schemaName, newResource, dataSource, _ => []),
+    )
     const actions = store.getActions()
+
+    expect(postedResource).toEqual(newResource)
 
     expect(actions[0]).toEqual({
       type: ResourceListActionTypes.POST_RESOURCE_REQUEST,
@@ -398,7 +409,12 @@ describe('Resources.postResource action', () => {
       },
     })
 
-    await store.dispatch(postResource(Bill.schemaName, resource2, dataSource))
+    try {
+      await store.dispatch(postResource(Bill.schemaName, resource2, dataSource))
+    } catch (error) {
+      expect(error).toEqual(new Error(DuplicateResourceError))
+    }
+
     let actions = store.getActions()
     store.clearActions()
 
@@ -417,11 +433,16 @@ describe('Resources.postResource action', () => {
       },
     })
 
-    await store.dispatch(
-      postResource(Bill.schemaName, new Bill(''), dataSource, resource =>
-        (resource as Bill).title.length === 0 ? [EmptyTitleValidationErrror] : [],
-      ),
-    )
+    try {
+      await store.dispatch(
+        postResource(Bill.schemaName, new Bill(''), dataSource, resource =>
+          (resource as Bill).title.length === 0 ? [EmptyTitleValidationErrror] : [],
+        ),
+      )
+    } catch (error) {
+      expect(error).toEqual(new Error(EmptyTitleValidationErrror))
+    }
+
     actions = store.getActions()
     store.clearActions()
 
@@ -440,12 +461,17 @@ describe('Resources.postResource action', () => {
       },
     })
 
-    const longName = '0123'.repeat(65) // 256 character name
-    await store.dispatch(
-      postResource(Bill.schemaName, new Bill(longName), dataSource, resource =>
-        (resource as Bill).title.length > 256 ? [LongTitleValidationErrror] : [],
-      ),
-    )
+    try {
+      const longName = '0123'.repeat(65) // 256 character name
+      await store.dispatch(
+        postResource(Bill.schemaName, new Bill(longName), dataSource, resource =>
+          (resource as Bill).title.length > 256 ? [LongTitleValidationErrror] : [],
+        ),
+      )
+    } catch (error) {
+      expect(error).toEqual(new Error(LongTitleValidationErrror))
+    }
+
     actions = store.getActions()
     store.clearActions()
 
@@ -465,13 +491,17 @@ describe('Resources.postResource action', () => {
     })
   })
 
-  test('postResources catches any error and handles it', async () => {
-    const mockError = 'error'
+  test('postResources can fail with an error and will update redux store with it', async () => {
+    const mockError = new Error('error')
     dataSource.postResource = jest.fn(() => {
-      throw new Error(mockError)
+      throw mockError
     })
 
-    await store.dispatch(postResource(Bill.schemaName, new Bill('abcd'), dataSource))
+    try {
+      await store.dispatch(postResource(Bill.schemaName, new Bill('abcd'), dataSource))
+    } catch (error) {
+      expect(error).toEqual(mockError)
+    }
     const actions = store.getActions()
 
     expect(actions[0]).toEqual({
@@ -484,7 +514,7 @@ describe('Resources.postResource action', () => {
     expect(actions[1]).toEqual({
       type: ResourceListActionTypes.POST_RESOURCE_FAILURE,
       payload: {
-        message: mockError,
+        message: mockError.message,
         resourceName: Bill.schemaName,
       },
     })
@@ -520,8 +550,12 @@ describe('Resource.patchResource action', () => {
 
     resourceToUpdate.title = 'new title'
 
-    await store.dispatch(patchResource(Bill.schemaName, resourceToUpdate, dataSource))
+    const patchedResource = await store.dispatch(
+      patchResource(Bill.schemaName, resourceToUpdate, dataSource),
+    )
     const actions = store.getActions()
+
+    expect(patchedResource).toEqual(resourceToUpdate)
 
     expect(actions[0]).toEqual({
       type: ResourceListActionTypes.PATCH_RESOURCE_REQUEST,
@@ -545,7 +579,12 @@ describe('Resource.patchResource action', () => {
     const resourceToUpdate = new Bill('original title')
     resourceToUpdate.title = 'new title'
 
-    await store.dispatch(patchResource(Bill.schemaName, resourceToUpdate, dataSource))
+    try {
+      await store.dispatch(patchResource(Bill.schemaName, resourceToUpdate, dataSource))
+    } catch (error) {
+      expect(error).toEqual(new Error(NoResourceToUpdateError))
+    }
+
     const actions = store.getActions()
 
     expect(actions[0]).toEqual({
@@ -566,11 +605,11 @@ describe('Resource.patchResource action', () => {
     expect(actions.length === 2)
   })
 
-  test('patchResource catches any error and handles it', async () => {
-    const mockError = 'error'
+  test('patchResource can fail with an error and will update redux store with it', async () => {
+    const mockError = new Error('error')
     const resourceToUpdate = new Bill('original title')
     dataSource.patchResource = jest.fn(() => {
-      throw new Error(mockError)
+      throw mockError
     })
 
     store = mockStore({
@@ -587,8 +626,12 @@ describe('Resource.patchResource action', () => {
     })
 
     resourceToUpdate.title = 'new title'
+    try {
+      await store.dispatch(patchResource(Bill.schemaName, resourceToUpdate, dataSource))
+    } catch (error) {
+      expect(error).toEqual(mockError)
+    }
 
-    await store.dispatch(patchResource(Bill.schemaName, resourceToUpdate, dataSource))
     const actions = store.getActions()
 
     expect(actions[0]).toEqual({
@@ -601,7 +644,7 @@ describe('Resource.patchResource action', () => {
     expect(actions[1]).toEqual({
       type: ResourceListActionTypes.PATCH_RESOURCE_FAILURE,
       payload: {
-        message: mockError,
+        message: mockError.message,
         resourceName: Bill.schemaName,
       },
     })
@@ -659,7 +702,12 @@ describe('Resources.deleteResource action', () => {
   test('deleteResource fails with error if resource to delete doesnt exist', async () => {
     const resourceToDelete = new Bill('resource title')
 
-    await store.dispatch(deleteResource(Bill.schemaName, resourceToDelete, dataSource))
+    try {
+      await store.dispatch(deleteResource(Bill.schemaName, resourceToDelete, dataSource))
+    } catch (error) {
+      expect(error).toEqual(new Error(NoResourceToDeleteError))
+    }
+
     const actions = store.getActions()
 
     expect(actions[0]).toEqual({
@@ -680,11 +728,11 @@ describe('Resources.deleteResource action', () => {
     expect(actions.length === 2)
   })
 
-  test('deleteResource catches any error and handles it', async () => {
-    const mockError = 'error'
+  test('deleteResource can fail with an error and will update redux store with it', async () => {
+    const mockError = new Error('error')
     const resourceToDelete = new Bill('original title')
     dataSource.deleteResource = jest.fn(() => {
-      throw new Error(mockError)
+      throw mockError
     })
 
     store = mockStore({
@@ -701,7 +749,12 @@ describe('Resources.deleteResource action', () => {
       },
     })
 
-    await store.dispatch(deleteResource(Bill.schemaName, resourceToDelete, dataSource))
+    try {
+      await store.dispatch(deleteResource(Bill.schemaName, resourceToDelete, dataSource))
+    } catch (error) {
+      expect(error).toEqual(mockError)
+    }
+
     const actions = store.getActions()
 
     expect(actions[0]).toEqual({
@@ -714,7 +767,7 @@ describe('Resources.deleteResource action', () => {
     expect(actions[1]).toEqual({
       type: ResourceListActionTypes.DELETE_RESOURCE_FAILURE,
       payload: {
-        message: mockError,
+        message: mockError.message,
         resourceName: Bill.schemaName,
       },
     })

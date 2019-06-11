@@ -50,7 +50,7 @@ export const getResources = <T extends Resource, S extends ReduxState>(
     dispatch(
       ResourceListsActions.getResourcesFailure(resourceName, { message: anyErrorToString(error) }),
     )
-    return Promise.reject()
+    return Promise.reject(error)
   }
 }
 
