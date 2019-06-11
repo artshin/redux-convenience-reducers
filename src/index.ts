@@ -22,6 +22,7 @@ import {
   patchResource,
   deleteResource,
   DataSourceProtocol,
+  BlankDataSource,
 } from './Actions/ResourceListsActions'
 
 export {
@@ -46,4 +47,5 @@ export {
   patchResource,
   deleteResource,
   DataSourceProtocol,
+  BlankDataSource,
 }
