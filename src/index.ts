@@ -10,6 +10,7 @@ import {
 import {
   DictionaryActionTypes,
   DictionaryReducer,
+  DictionaryActions,
   initialState as dictionaryReducerInitialState,
   reducer as dictionaryReducer,
 } from './Reducers/DictionaryReducer'
