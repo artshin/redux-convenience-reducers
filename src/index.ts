@@ -31,6 +31,7 @@ export {
   DictionaryReducer,
   dictionaryReducerInitialState,
   dictionaryReducer,
+  DictionaryActions,
   ResourceListsActions,
   ResourceListsReducer,
   ResourceListActionTypes,

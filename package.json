@@ -1,6 +1,6 @@
 {
   "name": "redux-convenience-reducers",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "main": "src/index.ts",
   "author": {
     "email": "npm@ashnkvch.com",
@@ -12,7 +12,8 @@
     "clean-install": "rm -rf node_modules && yarn",
     "babel-build": "babel src --out-dir lib --extensions \".ts,.tsx\"",
     "build": "tsc --outDir lib",
-    "dev": "ts-node src"
+    "dev": "ts-node src",
+    "publish": "npm publish"
   },
   "dependencies": {
     "@martin_hotell/rex-tils": "2.1.1",
